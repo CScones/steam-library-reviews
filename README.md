@@ -16,32 +16,33 @@ When you open a game in your Steam Library, this plugin watches the main Steam s
 
 1. Place this plugin folder inside your Millennium `plugins` directory.
 2. Enable the plugin from Millennium’s Plugins area in Steam.
-3. Fully exit and reopen Steam.
-4. Open a game in your Library and look for the injected review summary block.
-
-## Editing / rebuilding
-
-This plugin was developed from the Millennium PluginTemplate. If you are editing the source files, run the development build command after changes:
-
-```bash
-pnpm run dev
-```
-
-You only need to run that after changing source files such as `frontend/index.tsx` or `webkit/index.tsx`. If nothing changed, you do not need to run it again just to use the plugin.
+3. Set up and start the local proxy by following `Proxy/README.md`.
+4. Fully exit and reopen Steam.
+5. Open a game in your Library and look for the injected review summary block.
 
 ## Project structure
 
 - `frontend/index.tsx`  
   Main Steam shell hook and Library review injection logic.
 
-- `webkit/index.tsx`  
-  Currently unused for the review feature. Safe to leave as a no-op.
-
 - `backend/main.lua`  
   Lua backend required by the template/plugin structure.
 
 - `plugin.json`  
   Millennium plugin manifest and display metadata.
+
+- `Proxy/`  
+  Local proxy setup files and instructions.
+
+## Editing / rebuilding
+
+This plugin was originally developed from the Millennium PluginTemplate. If you are editing source files, run the development build command after changes:
+
+```bash
+pnpm run dev
+```
+
+You only need to run that after changing source files. If nothing changed, you do not need to run it again just to use the plugin.
 
 ## Notes
 
@@ -66,10 +67,6 @@ pnpm run dev
 ```
 
 Then fully restart Steam.
-
-### Store page still shows an old test banner
-
-Make sure `webkit/index.tsx` was cleaned up and rebuilt, then restart Steam.
 
 ## Development reminder
 
