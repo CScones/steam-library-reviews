@@ -16,7 +16,7 @@ When you open a game in your Steam Library, this plugin watches the main Steam s
 
 1. Place this plugin folder inside your Millennium `plugins` directory.
 2. Enable the plugin from Millennium’s Plugins area in Steam.
-3. Set up and start the local proxy by following `Proxy/README.md`.
+3. Set up and start the local proxy by following `PROXY SETUP/README.md`.
 4. Fully exit and reopen Steam.
 5. Open a game in your Library and look for the injected review summary block.
 
@@ -31,7 +31,7 @@ When you open a game in your Steam Library, this plugin watches the main Steam s
 - `plugin.json`  
   Millennium plugin manifest and display metadata.
 
-- `Proxy/`  
+- `PROXY SETUP/`  
   Local proxy setup files and instructions.
 
 ## Editing / rebuilding
@@ -46,7 +46,7 @@ You only need to run that after changing source files. If nothing changed, you d
 
 ## Notes
 
-- The plugin depends on the local proxy endpoint. If the proxy is not running, the review block may show an error or fail to load.
+- The plugin depends on the local proxy endpoint. If the proxy is not running, the review block may show fetch failed or fail to load.
 - This plugin targets the main Steam shell window rather than relying on Store page webkit injection.
 - If Steam does not reflect an update, do a full Steam exit and reopen it.
 
