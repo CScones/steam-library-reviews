@@ -3,6 +3,7 @@
 A Millennium plugin that adds Steam review summaries directly to the Steam Library game details panel.
 
 It fetches review data from a tiny local proxy, inserts an **Overall Reviews** and **Recent Reviews** block below the game metadata, keeps the game details panel visible, and removes the Steam dim-state class that was hiding or muting the panel in the working layout.
+NOTE: This plugin pulls global overall and global recent reviews. Your store page may be different since it's pulling local reviews.
 
 ## Features
 
@@ -24,9 +25,7 @@ It fetches review data from a tiny local proxy, inserts an **Overall Reviews** a
 
 The plugin watches the Steam Library DOM for navigation and layout changes, then finds the current app ID from nearby links, images, attributes, or the current URL. It inserts a review block under the `Developer:` metadata row and updates it with proxy data for the currently selected game.
 
-The final working version avoids a self-triggering MutationObserver loop by ignoring changes caused by its own injected review block and by not repeatedly rerendering the same app state unless the selected game changes.
-
-The frontend also aborts in-flight fetches when switching games so stale responses do not overwrite the newest selection, which is a standard use case for `AbortController` in fast-changing UIs.
+ELI5: Separate local service (proxy) pulls the review data from Steam and gives it to the plugin when you select a game. Then it displays that review data inside the Game Info which is forced to display.
 
 ## Setup
 
