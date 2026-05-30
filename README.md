@@ -3,6 +3,7 @@
 A Millennium plugin that adds Steam review summaries directly to the Steam Library game details panel.
 
 It fetches review data from a tiny local proxy, inserts an **Overall Reviews** and **Recent Reviews** block below the game metadata, keeps the game details panel visible, and removes the Steam dim-state class that was hiding or muting the panel in the working layout.
+
 NOTE: This plugin pulls global overall and global recent reviews. Your store page may be different since it's pulling local reviews.
 
 ## Features
