@@ -1,82 +1,102 @@
 # Steam Library Reviews
 
-Adds store-style **Overall Reviews** and **Recent Reviews** summaries to the Steam Library game details page by pulling review data from a local proxy endpoint.
+A Millennium plugin that adds Steam review summaries directly to the Steam Library game details panel.
 
-## What it does
+It fetches review data from a tiny local proxy, inserts an **Overall Reviews** and **Recent Reviews** block below the game metadata, keeps the game details panel visible, and removes the Steam dim-state class that was hiding or muting the panel in the working layout.[cite:666][cite:667][cite:672]
 
-When you open a game in your Steam Library, this plugin watches the main Steam shell UI, detects the Library details page, finds the nearby app ID, requests review summary data from a local proxy, and inserts a small two-line review block near the game metadata.
+## Features
 
-## Requirements
+- Adds review rows under the game details area.
+- Shows review count and review label.
+- Applies colored review text, including a rainbow effect for **Overwhelmingly Positive**.
+- Uses request cancellation to avoid stale updates during fast navigation.[cite:648][cite:654]
+- Removes the discovered dim-state class from the game info area so the panel stays readable.
 
-- Millennium installed and working in Steam
-- A local review proxy running at `http://127.0.0.1:32145/reviews`
-- Steam fully restarted after enabling or updating the plugin
+## Files
 
-## Install for normal use
+| File | Purpose |
+|---|---|
+| `index.tsx` | Main Millennium plugin entry point. Watches Steam's Library UI, injects the review block, removes the dim class, and fetches review data from the local proxy. |
+| `server.js` | Small local proxy server that requests Steam review summary data and returns normalized JSON. |
 
-1. Place this plugin folder inside your Millennium `plugins` directory.
-2. Enable the plugin from Millennium’s Plugins area in Steam.
-3. Set up and start the local proxy by following `PROXY SETUP/README.md`.
-4. Fully exit and reopen Steam.
-5. Open a game in your Library and look for the injected review summary block.
+## How it works
 
-## Project structure
+The plugin watches the Steam Library DOM for navigation and layout changes, then finds the current app ID from nearby links, images, attributes, or the current URL. It inserts a review block under the `Developer:` metadata row and updates it with proxy data for the currently selected game.[cite:666][cite:672]
 
-- `frontend/index.tsx`  
-  Main Steam shell hook and Library review injection logic.
+The final working version avoids a self-triggering MutationObserver loop by ignoring changes caused by its own injected review block and by not repeatedly rerendering the same app state unless the selected game changes.[cite:666][cite:667][cite:672]
 
-- `backend/main.lua`  
-  Lua backend required by the template/plugin structure.
+The frontend also aborts in-flight fetches when switching games so stale responses do not overwrite the newest selection, which is a standard use case for `AbortController` in fast-changing UIs.[cite:648][cite:654]
 
-- `plugin.json`  
-  Millennium plugin manifest and display metadata.
+## Setup
 
-- `PROXY SETUP/`  
-  Local proxy setup files and instructions.
+### 1. Start the proxy
 
-## Editing / rebuilding
-
-This plugin was originally developed from the Millennium PluginTemplate. If you are editing source files, run the development build command after changes:
+Run the local proxy before launching or testing the plugin:
 
 ```bash
-pnpm run dev
+node server.js
 ```
 
-You only need to run that after changing source files. If nothing changed, you do not need to run it again just to use the plugin.
+Expected local endpoint:
+
+```text
+http://127.0.0.1:32145/reviews?appid=620
+```
+
+### 2. Update the plugin entry file
+
+Replace your current plugin `index.tsx` with the cleaned working version.
+
+### 3. Reload Steam / Millennium
+
+Reload the plugin or restart Steam after saving changes.
 
 ## Notes
 
-- The plugin depends on the local proxy endpoint. If the proxy is not running, the review block may show fetch failed or fail to load.
-- This plugin targets the main Steam shell window rather than relying on Store page webkit injection.
-- If Steam does not reflect an update, do a full Steam exit and reopen it.
+- `server.js` can stay as-is if it is already returning correct review JSON.
+- `index.tsx` is the main file you update when changing UI behavior.
+- The current implementation prefers fresh fetches over a frontend memory cache because the cache path was not providing reliable value for this navigation pattern.[cite:657][cite:659]
+- If the Steam UI changes class names in a future client update, the selectors for the game details box or dim-state class may need to be rediscovered.
+
+## Returned proxy shape
+
+Example response from the local proxy:
+
+```json
+{
+  "appid": "620",
+  "overall": {
+    "total_reviews": 123456,
+    "review_score_desc": "Very Positive"
+  },
+  "recent": {
+    "total_reviews": null,
+    "review_score_desc": "Unavailable"
+  }
+}
+```
 
 ## Troubleshooting
 
-### Review block does not appear
+### Reviews keep refreshing constantly
 
-- Confirm the plugin is enabled in Millennium
-- Confirm the local proxy is running at `http://127.0.0.1:32145/reviews`
-- Fully exit Steam and reopen it
+That usually means the DOM observer is reacting to the plugin's own DOM updates. The working fix is to ignore mutations inside the injected review block and avoid rerendering unchanged app state.[cite:666][cite:667][cite:672]
 
-### Plugin works but changes do not show
+### The game info panel looks dim again
 
-If you edited source files, run:
+The dimming was traced to a specific Steam class: `_1FXWy2UilVZIppT-PetDWw`. If Steam changes its UI again, inspect the parent game info container in DevTools and find the new class causing the dim state.
 
-```bash
-pnpm run dev
-```
+### Reviews do not load
 
-Then fully restart Steam.
+Check that:
 
-## Development reminder
+- `server.js` is running.
+- The proxy is reachable on `127.0.0.1:32145`.
+- The selected game has a detectable Steam app ID.
+- The proxy returns JSON instead of an error.
 
-For day-to-day use, treat this as a normal installed plugin.
+## Future improvements
 
-For source edits, use this flow:
-
-1. Edit source
-2. Run `pnpm run dev`
-3. Restart Steam
-4. Test again
-
-That build step is for development only, not normal use.
+- Add typed interfaces on the server side too for easier maintenance.[cite:647][cite:656]
+- Optionally add a safer teardown path if the plugin ever needs to disconnect observers during unload, since MutationObservers are meant to be disconnected when no longer needed.[cite:627][cite:630]
+- Add a fallback strategy if Steam changes the metadata anchor row or class names.
