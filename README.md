@@ -2,14 +2,15 @@
 
 A Millennium plugin that adds Steam review summaries directly to the Steam Library game details panel.
 
-It fetches review data from a tiny local proxy, inserts an **Overall Reviews** and **Recent Reviews** block below the game metadata, keeps the game details panel visible, and removes the Steam dim-state class that was hiding or muting the panel in the working layout.[cite:666][cite:667][cite:672]
+It fetches review data from a tiny local proxy, inserts an **Overall Reviews** and **Recent Reviews** block below the game metadata, keeps the game details panel visible, and removes the Steam dim-state class that was hiding or muting the panel in the working layout.
 
 ## Features
 
+- Force shows Game Info on select.
 - Adds review rows under the game details area.
 - Shows review count and review label.
 - Applies colored review text.
-- Force shows Game Info on select.
+
 
 
 ## Files
