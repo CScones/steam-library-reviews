@@ -8,9 +8,9 @@ It fetches review data from a tiny local proxy, inserts an **Overall Reviews** a
 
 - Adds review rows under the game details area.
 - Shows review count and review label.
-- Applies colored review text, including a rainbow effect for **Overwhelmingly Positive**.
-- Uses request cancellation to avoid stale updates during fast navigation.[cite:648][cite:654]
-- Removes the discovered dim-state class from the game info area so the panel stays readable.
+- Applies colored review text.
+- Force shows Game Info on select.
+
 
 ## Files
 
@@ -21,11 +21,11 @@ It fetches review data from a tiny local proxy, inserts an **Overall Reviews** a
 
 ## How it works
 
-The plugin watches the Steam Library DOM for navigation and layout changes, then finds the current app ID from nearby links, images, attributes, or the current URL. It inserts a review block under the `Developer:` metadata row and updates it with proxy data for the currently selected game.[cite:666][cite:672]
+The plugin watches the Steam Library DOM for navigation and layout changes, then finds the current app ID from nearby links, images, attributes, or the current URL. It inserts a review block under the `Developer:` metadata row and updates it with proxy data for the currently selected game.
 
-The final working version avoids a self-triggering MutationObserver loop by ignoring changes caused by its own injected review block and by not repeatedly rerendering the same app state unless the selected game changes.[cite:666][cite:667][cite:672]
+The final working version avoids a self-triggering MutationObserver loop by ignoring changes caused by its own injected review block and by not repeatedly rerendering the same app state unless the selected game changes.
 
-The frontend also aborts in-flight fetches when switching games so stale responses do not overwrite the newest selection, which is a standard use case for `AbortController` in fast-changing UIs.[cite:648][cite:654]
+The frontend also aborts in-flight fetches when switching games so stale responses do not overwrite the newest selection, which is a standard use case for `AbortController` in fast-changing UIs.
 
 ## Setup
 
@@ -55,7 +55,7 @@ Reload the plugin or restart Steam after saving changes.
 
 - `server.js` can stay as-is if it is already returning correct review JSON.
 - `index.tsx` is the main file you update when changing UI behavior.
-- The current implementation prefers fresh fetches over a frontend memory cache because the cache path was not providing reliable value for this navigation pattern.[cite:657][cite:659]
+- The current implementation prefers fresh fetches over a frontend memory cache because the cache path was not providing reliable value for this navigation pattern.
 - If the Steam UI changes class names in a future client update, the selectors for the game details box or dim-state class may need to be rediscovered.
 
 ## Returned proxy shape
@@ -80,7 +80,7 @@ Example response from the local proxy:
 
 ### Reviews keep refreshing constantly
 
-That usually means the DOM observer is reacting to the plugin's own DOM updates. The working fix is to ignore mutations inside the injected review block and avoid rerendering unchanged app state.[cite:666][cite:667][cite:672]
+That usually means the DOM observer is reacting to the plugin's own DOM updates. The working fix is to ignore mutations inside the injected review block and avoid rerendering unchanged app state.
 
 ### The game info panel looks dim again
 
@@ -97,6 +97,6 @@ Check that:
 
 ## Future improvements
 
-- Add typed interfaces on the server side too for easier maintenance.[cite:647][cite:656]
-- Optionally add a safer teardown path if the plugin ever needs to disconnect observers during unload, since MutationObservers are meant to be disconnected when no longer needed.[cite:627][cite:630]
+- Add typed interfaces on the server side too for easier maintenance.
+- Optionally add a safer teardown path if the plugin ever needs to disconnect observers during unload, since MutationObservers are meant to be disconnected when no longer needed.
 - Add a fallback strategy if Steam changes the metadata anchor row or class names.
